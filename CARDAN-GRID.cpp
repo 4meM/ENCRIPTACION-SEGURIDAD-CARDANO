@@ -151,12 +151,26 @@ void concatenar(fstream &in, string &word){
 }
 
 
+bool restricciones(string &word){
+    char caracter;
+    for(int i = 0; i < word.size(); i++){
+        if(int(word[i]) < 0 && !isalpha(word[i]) && word[i] != ' '){
+            return false;
+        }
+    }
+    return true;
+}
+
 int main() {
     srand(time(0));
     
     string word; 
     fstream in("MENSAJE.txt");
     concatenar(in, word);
+    if(!restricciones(word)){
+        cout << "El archivo contiene caracteres no validos. Solo se permiten letras del alfabeto ingles y espacios" << endl;
+        return 1; 
+    }
     int sizeOriginal = word.size();
     word = padTextToMultipleOfFour(word);
     int sizeRejilla = calculateNextEvenSquareSize(word.size());
