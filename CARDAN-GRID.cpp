@@ -7,6 +7,8 @@
 #include <random>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <string>
 using namespace std;
 typedef long long ll;
 typedef vector<int> vi;
@@ -21,10 +23,17 @@ int calculateNextEvenSquareSize(int minSize){
     return (raiz % 2 != 0? raiz + 1 : raiz); 
 }
 
+char randomChar(){
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis(0, 25);
+    return 'A' + dis(gen);
+}
+
 string padTextToMultipleOfFour(string text){
     string padding = "";
     for(int i = text.size(); i % 4 != 0; i++){
-        padding += "X";
+        padding += randomChar();
     }
     return text + padding;
 }
@@ -109,7 +118,7 @@ void fillMatrixWithRotatedGrille(vector<vector<char>>& matrix, const string& tex
 }
 
 vector<vector<char>> encryptWithCardanGrille(string text, vector<pair<int,int>> grille, int gridSize){
-    vector<vector<char>> matriz(gridSize, vector<char>(gridSize, ' '));
+    vector<vector<char>> matriz(gridSize, vector<char>(gridSize, '*'));
     int index = 0;
     for(int rotacion = 0; rotacion < 4; rotacion++){
         fillMatrixWithRotatedGrille(matriz, text, grille, index);
@@ -126,7 +135,7 @@ void fillRemainingWithRandomLetters(vector<vector<char>>& matrix) {
 
     for(int i = 0; i < matrix.size(); i++) {
         for(int j = 0; j < matrix[i].size(); j++) {
-            if(matrix[i][j] == ' ') {
+            if(matrix[i][j] == '*') {
                 char randomChar = 'A' + dis(gen);
                 matrix[i][j] = randomChar;
             }
@@ -134,38 +143,50 @@ void fillRemainingWithRandomLetters(vector<vector<char>>& matrix) {
     }
 }
 
+void concatenar(fstream &in, string &word){
+    string linea;
+    while(getline(in, linea)){
+        word += linea;
+    }
+}
+
+
 int main() {
     srand(time(0));
     
-    string word; cin >> word;
+    string word; 
+    fstream in("MENSAJE.txt");
+    concatenar(in, word);
+    int sizeOriginal = word.size();
     word = padTextToMultipleOfFour(word);
     int sizeRejilla = calculateNextEvenSquareSize(word.size());
     int holes = word.size() / 4; 
     vector<pair<int,int>> rejilla = generateCardanGrillePattern(sizeRejilla, holes);
-    
+    ofstream out("MENSAJE-CIFRADO.txt"); 
+    out << sizeOriginal << '\n';
+    out << sizeRejilla << '\n';
     for(int i = 0; i < sizeRejilla; i++){
         for(int j = 0; j < sizeRejilla; j++){
             for(int k = 0; k < rejilla.size(); k++){
                 if(rejilla[k].first == i && rejilla[k].second == j){
-                    cout << "0 ";
+                    out << "0";
                     break;
                 }
                 if(k == rejilla.size() - 1){
-                    cout << "# ";
+                    out << "#";
                 }
             }
         }
-        cout << endl;
+        out << '\n';
     } 
-    cout << endl;
     
     vector<vector<char>> matriz = encryptWithCardanGrille(word, rejilla, sizeRejilla);
     fillRemainingWithRandomLetters(matriz);
     for(int i = 0; i < matriz.size(); i++){
         for(int j = 0; j < matriz[i].size(); j++){
-            cout << matriz[i][j] << " ";
+            out << matriz[i][j];
         }
-        cout << endl;
+        out << '\n';
     }
     
 }
