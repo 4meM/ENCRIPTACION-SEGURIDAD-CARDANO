@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/ENCRIPTACION-SEGURIDAD-CARDANO/CopilotIndices/17.14.1231.31060
+/.vs/ENCRIPTACION-SEGURIDAD-CARDANO/v17
+/.vs/ENCRIPTACION-SEGURIDAD-CARDANO/FileContentIndex
+*.json
+*.sqlite
+*.sqlite-journal
+/.gitignore
